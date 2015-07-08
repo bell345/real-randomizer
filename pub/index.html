@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Spotify Stuff</title>
+    <meta charset="utf-8" />
+    <base href="./" />
+    <link rel="stylesheet" href="assets/css/site.css" />
+    <link rel="stylesheet" href="assets/css/app.css" />
+    <script src="assets/js/jquery2.min.js"></script>
+    <script src="assets/js/require.js"></script>
+    <script src="assets/js/app.js"></script>
+</head>
+<body>
+    <main>
+        <h1>Real Randomizer</h1>
+        <h3>Because Spotify doesn't do a good job</h3>
+        <a href="#" class="up-down on" for=".explanation">Show/Hide explanation</a>
+        <div class="explanation">
+            <p>
+                This is a quick application that utilizes the Spotify Web API to shuffle your
+                playlists <em>properly</em>, as God intended. The shuffle feature on Spotify
+                only shuffles about 20 or so songs and then resamples, which leads to
+                annoying repeats and should be changed. This is
+                <a href="//bell345.github.io">my</a> way of fixing the problem.
+            </p><p>
+                Once logged in, you can choose a playlist from the dropdown box to the right.
+                The application will load the playlist's tracks into a table, for your
+                viewing pleasure. Clicking the headers will first sort ascending, then
+                descending, then restore the original sort order. Clicking "Sort Randomly"
+                will shuffle the <em>entire list</em> completely randomly.
+            </p><p>
+                Clicking "Make Playlist" will take this list, and its order; and produce
+                a new, private playlist named "Real Randomizer Playlist". It will overwrite
+                the first playlist with this name, to prevent spamming. Once its done, you can
+                click the shiny new "View Playlist" to open this playlist in Spotify.
+            </p><p>
+                Your new playlist is meant to be enjoyed <em>without</em> the in-built shuffle feature,
+                and has all the same tracks as the original. It does not, in any way, modify the original
+                playlist; so you can shuffle public, collaborative and even followed playlists properly.
+                To reshuffle, just come back here and go through the same process: it'll go into the same
+                "Real Randomizer Playlist".
+            </p>
+        </div>
+        <hr>
+        <div class="not-logged-in">
+            <h2>Login with Spotify</h2>
+            <p>
+                To use this app, you'll need to login.
+            </p>
+            <div class="button-row">
+                <a href="/login"><button class="major">
+                    Login
+                </button></a>
+            </div>
+        </div>
+        <div class="logged-in">
+            <div class="control-row float-right">
+                <select class="playlist-select">
+                    <option value="-"> -- select a playlist to randomize -- </option>
+                    <option value="your-music">Your Music</option>
+                </select>
+                <button class="major logout">Logout</button>
+            </div>
+            <div class="loading-tracks">
+                <span>Now loading...</span>
+                <meter></meter>
+            </div>
+            <div class="loaded-tracks">
+                <div class="control-row">
+                    <button class="sort-randomly">Sort Randomly</button>
+                    <button class="make-playlist">
+                        Make Playlist<span class="loading-playlist playlist-status"></span>
+                    </button>
+                    <span class="loaded-playlist">
+                        <a href="#" class="view-playlist"><button>
+                            View Playlist
+                        </button></a>
+                    </span>
+                </div>
+                <table id="spotify-tracks" class="main sortable">
+                    <thead>
+                        <th class="sort">Track Name</th>
+                        <th class="sort">Artist(s)</th>
+                        <th class="sort custom-numeric">Length</th>
+                        <th class="sort date">Date Added</th>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <footer>
+            <aside>
+                &copy; Thomas Bell (MIT License) 2015 &middot;
+                <a href="//bell345.github.io">Website</a> &middot;
+                <a href="mailto:tom.aus@outlook.com">Email</a> &middot;
+                <a href="//github.com/bell345/real-randomizer">Source (on GitHub)</a>
+            </aside>
+        </footer>
+    </main>
+</body>
+</html>

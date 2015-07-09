@@ -49,3 +49,6 @@ aside, aside * {
     color:#aaa;
     font-size:12px;
 }
+.explanation {
+    transition:0s all;
+}

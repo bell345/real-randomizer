@@ -422,11 +422,6 @@ Require([
                 },
                 function () {
                     $(select).show();
-                    if (!isNull(playlistID)) {
-                        $(select).val(playlistID);
-                        if ($(select).val() != playlistID)
-                            $(select).val("-");
-                    }
                 },
                 function () {
                     loadPlaylist(null, null);

@@ -1,3 +1,4 @@
+var updateSelectAll;
 $(function () {
 Require([
     "assets/js/tblib/base.js",
@@ -362,7 +363,7 @@ Require([
                     } else row.id = "spotify-track-" + track.id;
 
                     if (row.id != "spotify-track-null") {
-                        addTD(row, "<input type='checkbox' checked />");
+                        addTD(row, "<input type='checkbox' checked onchange='updateSelectAll();' />");
                         addTDLink(row, track.name, track.uri);
 
                         var artistCell = document.createElement("td");
@@ -403,10 +404,30 @@ Require([
                     $(".loaded-tracks").show();
                     $(tbody).toggleClass("done", false);
                     TBI.UI.updateUI(true);
+                    updateSelectAll();
                     loadingPlaylist = false;
                 }
             )
 
+        }
+        
+        updateSelectAll = function () {
+            var el = $(".select-all");
+            var tracks = $("#spotify-tracks tbody tr");
+            var searching = $("#spotify-tracks").hasClass("search");
+            
+            var checked = true;
+            for (var i=0;i<tracks.length;i++) {
+                if (searching && !($(tracks[i]).hasClass("search-result"))) continue;
+                
+                var checkbox = tracks[i].querySelector("input[type='checkbox']");
+                if (!TBI.UI.isToggled(checkbox)) {
+                    checked = false;
+                    break;
+                }
+            }
+            
+            TBI.UI.toggleButton(el, checked); // cosmetic
         }
 
         function logout() {
@@ -544,6 +565,7 @@ Require([
                     }
                 }
             }
+            updateSelectAll();
         });
         
         $(".select-all").change(function () {

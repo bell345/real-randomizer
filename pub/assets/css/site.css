@@ -1081,6 +1081,7 @@ div.popup ul {
 /* ============ */
 meter::-webkit-meter-bar, progress::-webkit-progress-bar {
     -webkit-appearance:none;
+    -moz-appearance:none;
     appearance:none;
     background:none;
     background-color:#e2e2e2;
@@ -1089,6 +1090,7 @@ meter::-webkit-meter-bar, progress::-webkit-progress-bar {
 }
 meter, progress {
     -webkit-appearance:none;
+    -moz-appearance:none;
     appearance:none;
     height:20px;
     width:600px;
@@ -1097,6 +1099,7 @@ meter, progress {
 }
 meter::-webkit-meter-optimum-value, progress::-webkit-progress-value {
     -webkit-appearance:none;
+    -moz-appearance:none;
     appearance:none;
     background:none;
     background-color:#08d;
@@ -1117,4 +1120,50 @@ meter[value]::after, progress[value]::after {
     font-size:13px;
     background:rgba(0,0,0,0.2);
     box-shadow:0 0 8px 2px rgba(0,0,0,0.2);
+}
+
+/* =============== */
+/*  UI - CHECKBOX  */
+/* =============== */
+input[type='checkbox'] {
+    -webkit-appearance: none;
+    -moz-appearance:none;
+    appearance:none;
+    width: 28px;
+    height: 28px;
+    position: relative;
+    box-shadow:inset 1px 1px 2px 0 rgba(0,0,0,0.3);
+    background:rgba(255,255,255,0.3);
+}
+input[type='checkbox']:checked {
+    box-shadow:1px 1px 2px 0 rgba(0,0,0,0.3);
+    background:rgba(200,200,200,0.3);
+}
+
+input[type='checkbox']::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    width: 0;
+    height: 0;
+    background: none;
+    transition: 0.2s cubic-bezier(0.32, 0.32, 0.34, 1.76) all;
+
+    margin-bottom:25%;
+    margin-left:50%;
+    border-right:6px solid transparent;
+    border-bottom:6px solid transparent;
+    border-color:transparent;
+    transform:rotate(45deg);
+}
+input[type='checkbox']:checked::after {
+    width: 50%;
+    height: 50%;
+    height:100%;
+    width:50%;
+    border-color:#2bf;
 }

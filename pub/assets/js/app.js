@@ -10,11 +10,13 @@ Require([
 
     loader.start();
     $(document).on("pageload", function () {
+        
+        var playlistName = "Real Randomizer Playlist";
 
         var access_token = readCookie("spotify_access_token");
         var refresh_token = readCookie("spotify_refresh_token");
         var userID = readCookie("spotify_user_id");
-        var playlistID = readCookie("spotify_playlist_id");
+        //var playlistID = readCookie("spotify_playlist_id");
 
         function prepareQuery(url, obj, isHash) {
             var str = url + (isHash?"#":"?");
@@ -219,7 +221,12 @@ Require([
         }
 
         function fillPlaylist(userID, playlistID, table) {
-            var trackIDs = $(table).find("tbody > tr").toArray().map(function (e) { return e.id; });
+            var trackIDs = $(table).find("tbody > tr")
+                                   .toArray()
+                                   .filter(function (e) {
+                                       return TBI.UI.isToggled(e.querySelector("input[type='checkbox']"));
+                                   })
+                                   .map(function (e) { return e.id; });
 
             $(".loading-playlist").show();
             $(".loaded-playlist").hide();
@@ -293,37 +300,38 @@ Require([
             });
         }
 
-        function setPlaylistID(id, method) {
+        /*function setPlaylistID(id, method) {
             playlistID = id;
             console.log(method + " playlist: "+id);
             createCookie("spotify_playlist_id", playlistID);
-        }
+        }*/
 
         function makePlaylist() {
             if (!isNull(userID)) {
-                if (!isNull(playlistID)) {
+                /*if (!isNull(playlistID)) {
                     $(".playlist-status").html(" (found remembered playlist, loading...)");
-                    fillPlaylist(userID, playlistID, $("#spotify-tracks")[0]);
-                } else {
+                    var fields = playlistID.split(":");
+                    fillPlaylist(fields[0], fields[1], $("#spotify-tracks")[0]);
+                } else */{
                     $(".playlist-status").html(" (trying to find playlist from list, loading...)");
                     listPlaylists(userID,
                         function (playlist) { // executed for every playlist loaded
                             console.log(playlist.name);
-                            if (playlist.name == "Real Randomizer Playlist") {
-                                setPlaylistID(playlist.id, "Found");
+                            if (playlist.name == playlistName && playlist.owner.id == userID) {
+                                //setPlaylistID(playlist.id, "Found");
 
-                                fillPlaylist(userID, playlistID, $("#spotify-tracks")[0]);
-                                return true; // interrupt laoding, prevent finalCallback from being called
+                                fillPlaylist(playlist.owner.id, playlist.id, $("#spotify-tracks")[0]);
+                                return true; // interrupt loading, prevent finalCallback from being called
                             }
                             return false;
                         },
                         function () { // executed when loading complete: i.e. we didn't find our playlist
                             $(".playlist-status").html(" (creating new playlist, loading...)");
-                            createPlaylist(userID, "Real Randomizer Playlist", // if not found, make our own
+                            createPlaylist(userID, playlistName, // if not found, make our own
                                 function (response, status, xhr) {
-                                    setPlaylistID(response.id, "Created");
+                                    //setPlaylistID(response.id, "Created");
 
-                                    fillPlaylist(userID, playlistID, $("#spotify-tracks")[0]);
+                                    fillPlaylist(userID, playlist.id, $("#spotify-tracks")[0]);
                                 }
                             );
                         }
@@ -354,6 +362,7 @@ Require([
                     } else row.id = "spotify-track-" + track.id;
 
                     if (row.id != "spotify-track-null") {
+                        addTD(row, "<input type='checkbox' checked />");
                         addTDLink(row, track.name, track.uri);
 
                         var artistCell = document.createElement("td");
@@ -375,6 +384,9 @@ Require([
                                 timeEl.innerHTML = minutes + ":" + zeroPrefix(seconds, 2);
                             timeCell.appendChild(timeEl);
                         row.appendChild(timeCell);
+                        
+                        addTDLink(row, track.album.name, track.album.uri);
+                        addTD(row, track.track_number);
 
                         addTD(row, trackContainer.added_at.substring(0, "yyyy-mm-dd".length));
 
@@ -389,6 +401,7 @@ Require([
                     meter.value = 0;
                     $(".loading-tracks").hide();
                     $(".loaded-tracks").show();
+                    $(tbody).toggleClass("done", false);
                     TBI.UI.updateUI(true);
                     loadingPlaylist = false;
                 }
@@ -416,8 +429,11 @@ Require([
             listPlaylists(userID,
                 function (playlist) {
                     var option = document.createElement("option");
-                    option.value = playlist.id;
+                    option.value = playlist.owner.id + ":" + playlist.id;
                     option.textContent = playlist.name;
+                    if (userID != null && playlist.owner.id != userID)
+                        option.textContent += " ("+playlist.owner.id+")";
+                    
                     select.appendChild(option);
                 },
                 function () {
@@ -434,7 +450,42 @@ Require([
         TBI.UI.updateUI();
 
         $(".sort-randomly").click(function () {
-            TBI.UI.sortTable($("#spotify-tracks")[0], -1, false, "custom", function () { return (Math.random() * 2 - 1) < 0; });
+            TBI.UI.sortTable($("#spotify-tracks")[0], -1, false, "custom", function () { return Math.random() < 0.5; });
+        });
+        
+        function getTDIndex(headers, match, fallback) {
+            for (var i=0;i<headers.length;i++)
+                if (headers[i].innerText == match)
+                    return i;
+            
+            return fallback;
+        }
+        
+        $(".sort-random-album").click(function () {
+            var headers = $("#spotify-tracks th"),
+                albumTDIndex = getTDIndex(headers, "Album", 3),
+                noTDIndex = getTDIndex(headers, "#", albumTDIndex + 1);
+            
+            var tracks = $("#spotify-tracks tbody")[0].getElementsByTagName("tr");
+            var albumOrder = [];
+            for (var i=0;i<tracks.length;i++) {
+                var album = tracks[i].getElementsByTagName("td")[albumTDIndex].textContent;
+                if (albumOrder.indexOf(album) == -1)
+                    albumOrder.push(album);
+            }
+            albumOrder.sort(function (a, b) { return Math.random() < 0.5 ? -1 : 1; });
+            
+            TBI.UI.sortTable($("#spotify-tracks")[0], -1, false, "custom", function (a, b) {
+                var albumA = a.getElementsByTagName("td")[albumTDIndex].textContent,
+                    albumB = b.getElementsByTagName("td")[albumTDIndex].textContent;
+                
+                if (albumA == albumB) {
+                    var trackNoA = parseInt(a.getElementsByTagName("td")[noTDIndex].textContent),
+                        trackNoB = parseInt(b.getElementsByTagName("td")[noTDIndex].textContent);
+                    
+                    return trackNoA < trackNoB;
+                } else return albumOrder.indexOf(albumA) < albumOrder.indexOf(albumB);
+            });
         });
         $(".make-playlist").click(makePlaylist);
 
@@ -448,12 +499,67 @@ Require([
 
             if (!loadingPlaylist) {
                 if (plist == "your-music") loadPlaylist(null, null);
-                else loadPlaylist(userID, plist);
+                else {
+                    var fields = plist.split(":");
+                    loadPlaylist(fields[0], fields[1]);
+                }
             } else alert("Please wait until the current playlist has finished loading.");
 
             loadingPlaylist = true;
         });
         $(".logout").click(logout);
+        $(".up-down[for='.explanation']").click(function () {
+            createCookie("explanation-show", TBI.UI.isToggled(this) ? "1" : "0");
+        });
+        if (readCookie("explanation-show") != null) {
+            $(".explanation").toggle(readCookie("explanation-show") == "1");
+        }
+        
+        $(".search-box").change(function () {
+            var v = $(".search-box").val().toLowerCase();
+            
+            if (isNull(v)) {
+                $("#spotify-tracks").toggleClass("search", false);
+            } else {
+                $("#spotify-tracks").toggleClass("search", true);
+                $("#spotify-tracks .search-result").toggleClass("search-result", false);
+                
+                var headers = $("#spotify-tracks th"),
+                    trackNameTDIndex = getTDIndex(headers, "Track Name", 0),
+                    artistNameTDIndex = getTDIndex(headers, "Artist(s)", 1),
+                    albumNameTDIndex = getTDIndex(headers, "Album", 3);
+                
+                var tracks = $("#spotify-tracks tbody tr");
+                for (var i=0;i<tracks.length;i++) {
+                    var tds = tracks[i].getElementsByTagName("td");
+                    var trackName = tds[trackNameTDIndex].textContent.toLowerCase(),
+                        artists = tds[artistNameTDIndex].textContent.toLowerCase(),
+                        album = tds[albumNameTDIndex].textContent.toLowerCase();
+                    
+                    if (trackName.search(v) != -1 ||
+                        artists.search(v) != -1 ||
+                        album.search(v) != -1
+                    ) {
+                        $(tracks[i]).toggleClass("search-result", true);
+                    }
+                }
+            }
+        });
+        
+        $(".select-all").change(function () {
+            var v = TBI.UI.isToggled(this);
+            
+            var searching = $("#spotify-tracks").hasClass("search");
+            
+            var tracks = $("#spotify-tracks tbody tr");
+            for (var i=0;i<tracks.length;i++) {
+                var checkbox = tracks[i].querySelector("input[type='checkbox']");
+                
+                if (searching && !($(tracks[i]).hasClass("search-result"))) continue;
+                
+                TBI.UI.toggleButton(checkbox, v);
+            }
+        });
     });
 });
 });

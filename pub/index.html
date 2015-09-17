@@ -41,6 +41,12 @@
                 "Real Randomizer Playlist".
             </p>
         </div>
+        <aside>
+            &copy; Thomas Bell (MIT License) 2015 &middot;
+            <a href="//bell345.github.io">Website</a> &middot;
+            <a href="mailto:tom.aus@outlook.com">Email</a> &middot;
+            <a href="//github.com/bell345/real-randomizer">Source (on GitHub)</a>
+        </aside>
         <hr>
         <div class="not-logged-in">
             <h2>Login with Spotify</h2>
@@ -54,7 +60,8 @@
             </div>
         </div>
         <div class="logged-in">
-            <div class="control-row float-right">
+            <div class="control-row top-row">
+                <input type="search" class="search-box loaded-tracks" placeholder="Search..." />
                 <select class="playlist-select">
                     <option value="-"> -- select a playlist to randomize -- </option>
                     <option value="your-music">Your Music</option>
@@ -62,26 +69,32 @@
                 <button class="major logout">Logout</button>
             </div>
             <div class="loading-tracks">
-                <span>Now loading...</span>
+                <div class="control-row">Now loading...</div>
                 <meter></meter>
             </div>
             <div class="loaded-tracks">
                 <div class="control-row">
                     <button class="sort-randomly">Sort Randomly</button>
-                    <button class="make-playlist">
-                        Make Playlist<span class="loading-playlist playlist-status"></span>
-                    </button>
-                    <span class="loaded-playlist">
-                        <a href="#" class="view-playlist"><button>
+                    <button class="sort-random-album">Sort Randomly (preserving album order)</button>
+                    <div class="control-row float-right">
+                        <button class="make-playlist major">
+                            Make Playlist<span class="loading-playlist playlist-status"></span>
+                        </button>
+                        <a href="#" class="loaded-playlist view-playlist"><button>
                             View Playlist
                         </button></a>
-                    </span>
+                    </div>
                 </div>
                 <table id="spotify-tracks" class="main sortable">
                     <thead>
+                        <th>
+                            <input type="checkbox" class="select-all" />
+                        </th>
                         <th class="sort">Track Name</th>
                         <th class="sort">Artist(s)</th>
                         <th class="sort custom-numeric">Length</th>
+                        <th class="sort">Album</th>
+                        <th class="numeric">#</th>
                         <th class="sort date">Date Added</th>
                     </thead>
                     <tbody>
@@ -90,14 +103,6 @@
                 </table>
             </div>
         </div>
-        <footer>
-            <aside>
-                &copy; Thomas Bell (MIT License) 2015 &middot;
-                <a href="//bell345.github.io">Website</a> &middot;
-                <a href="mailto:tom.aus@outlook.com">Email</a> &middot;
-                <a href="//github.com/bell345/real-randomizer">Source (on GitHub)</a>
-            </aside>
-        </footer>
     </main>
 </body>
 </html>

@@ -110,7 +110,7 @@ TBI.UI.updateUI = function (force) {
         $(sortHeaders).off("click");
         $(sortHeaders).click(function (table) {
             return function () {
-                var upDownList = table.querySelectorAll("thead th.sort");
+                var upDownList = table.querySelectorAll("thead th");
                 var index = -1;
                 // find current column index
                 for (var i=0;i<upDownList.length;i++) {

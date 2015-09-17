@@ -45,6 +45,10 @@ meter[value]::after {
     float:right;
 }
 
+#spotify-tracks td:first-child {
+    text-align:center;
+}
+
 footer {
     text-align:center;
     margin-top:16px;

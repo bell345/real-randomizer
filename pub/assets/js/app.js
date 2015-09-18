@@ -178,6 +178,13 @@ Require([
                 }
             })
         }
+        
+        function updatePlaylistStatusMeter(progress, max, text) {
+            var meter = $(".playlist-status meter")[0];
+            meter.max = max;
+            meter.value = progress;
+            $(".playlist-status div").html(text);
+        }
 
         function fillPlaylistMore(userID, playlistID, trackIDList, offset) {
             var maxTracks = 100; // as specified by Spotify API
@@ -200,13 +207,14 @@ Require([
                     if ((offset + maxTracks) > trackIDList.length) {
                         alert("Your playlist is ready! Reminder: turn off shuffle!");
                         followPlaylist(userID, playlistID, function () {});
-
-                        $(".playlist-status").html("");
+                        
+                        updatePlaylistStatusMeter(0, 0, "");
                         $(".loading-playlist").hide();
                         $(".loaded-playlist").show();
                         $(".view-playlist")[0].href = "spotify:user:"+userID+":playlist:"+playlistID;
                     } else {
-                        $(".playlist-status").html(" (playlist is filling, "+parseInt((offset+maxTracks)/trackIDList.length*100)+"% done)");
+                        updatePlaylistStatusMeter(offset + maxTracks, trackIDList.length, "Playlist is filling...");
+                        
                         console.log("Filling playlist: ", offset + maxTracks);
                         fillPlaylistMore(userID, playlistID, trackIDList, offset + maxTracks);
                     }
@@ -214,7 +222,7 @@ Require([
                 error: function (xhr, status, error) {
                     handleError(xhr, status, error, "fill the playlist");
 
-                    $(".playlist-status").html("");
+                    updatePlaylistStatusMeter(0, 0, "");
                     $(".loading-playlist").hide();
                     $(".loaded-playlist").hide();
                 }
@@ -314,7 +322,7 @@ Require([
                     var fields = playlistID.split(":");
                     fillPlaylist(fields[0], fields[1], $("#spotify-tracks")[0]);
                 } else */{
-                    $(".playlist-status").html(" (trying to find playlist from list, loading...)");
+                    updatePlaylistStatusMeter(0, 0, "Trying to find playlist from list, loading...");
                     listPlaylists(userID,
                         function (playlist) { // executed for every playlist loaded
                             console.log(playlist.name);
@@ -327,7 +335,7 @@ Require([
                             return false;
                         },
                         function () { // executed when loading complete: i.e. we didn't find our playlist
-                            $(".playlist-status").html(" (creating new playlist, loading...)");
+                            updatePlaylistStatusMeter(0, 0, "Creating new playlist, loading...");
                             createPlaylist(userID, playlistName, // if not found, make our own
                                 function (response, status, xhr) {
                                     //setPlaylistID(response.id, "Created");

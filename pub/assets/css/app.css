@@ -30,10 +30,12 @@ meter[value]::after {
 }
 
 #spotify-tracks td:nth-child(4),
-#spotify-tracks td:nth-child(6),
 #spotify-tracks td:nth-child(7){
     white-space:nowrap;
     text-align:right;
+}
+#spotify-tracks tr *:nth-child(6) {
+    display: none;
 }
 #spotify-tracks.search tbody tr:not(.search-result) {
     display:none;

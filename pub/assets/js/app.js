@@ -395,7 +395,7 @@ Require([
                         row.appendChild(timeCell);
                         
                         addTDLink(row, track.album.name, track.album.uri);
-                        addTD(row, track.track_number);
+                        addTD(row, track.disc_number + ":" + track.track_number);
 
                         addTD(row, trackContainer.added_at.substring(0, "yyyy-mm-dd".length));
 
@@ -493,24 +493,29 @@ Require([
         $(".sort-random-album").click(function () {
             var headers = $("#spotify-tracks th"),
                 albumTDIndex = getTDIndex(headers, "Album", 3),
-                noTDIndex = getTDIndex(headers, "#", albumTDIndex + 1);
+                noTDIndex = getTDIndex(headers, "#", albumTDIndex + 1),
+                getAlbumID = function (el) { return el.getElementsByTagName("td")[albumTDIndex].getElementsByTagName("a")[0].href; },
+                getSequenceOrder = function (el) { 
+                    var v = el.getElementsByTagName("td")[noTDIndex].split(":"); 
+                    return parseInt(v[0]) * 1000 + parseInt(v[1]); 
+                };
             
             var tracks = $("#spotify-tracks tbody")[0].getElementsByTagName("tr");
             var albumOrder = [];
             for (var i=0;i<tracks.length;i++) {
-                var album = tracks[i].getElementsByTagName("td")[albumTDIndex].textContent;
+                var album = getAlbumID(tracks[i]);
                 if (albumOrder.indexOf(album) == -1)
                     albumOrder.push(album);
             }
             albumOrder.sort(function (a, b) { return Math.random() < 0.5 ? -1 : 1; });
             
             TBI.UI.sortTable($("#spotify-tracks")[0], -1, false, "custom", function (a, b) {
-                var albumA = a.getElementsByTagName("td")[albumTDIndex].textContent,
-                    albumB = b.getElementsByTagName("td")[albumTDIndex].textContent;
+                var albumA = getAlbumID(a),
+                    albumB = getAlbumID(b);
                 
                 if (albumA == albumB) {
-                    var trackNoA = parseInt(a.getElementsByTagName("td")[noTDIndex].textContent),
-                        trackNoB = parseInt(b.getElementsByTagName("td")[noTDIndex].textContent);
+                    var trackNoA = getSequenceOrder(a),
+                        trackNoB = getSequenceOrder(b);
                     
                     return trackNoA < trackNoB;
                 } else return albumOrder.indexOf(albumA) < albumOrder.indexOf(albumB);

@@ -496,7 +496,7 @@ Require([
                 noTDIndex = getTDIndex(headers, "#", albumTDIndex + 1),
                 getAlbumID = function (el) { return el.getElementsByTagName("td")[albumTDIndex].getElementsByTagName("a")[0].href; },
                 getSequenceOrder = function (el) { 
-                    var v = el.getElementsByTagName("td")[noTDIndex].split(":"); 
+                    var v = el.getElementsByTagName("td")[noTDIndex].textContent.split(":"); 
                     return parseInt(v[0]) * 1000 + parseInt(v[1]); 
                 };
             

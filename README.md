@@ -14,8 +14,8 @@ This project requires the following from `npm` to work properly:
 * querystring
 * cookie-parser 
 
-~I've hosted this on an Amazon EC2 instance without SSL or a proper DNS name 
-because I don't have any money.~
+<del>I've hosted this on an Amazon EC2 instance without SSL or a proper DNS name 
+because I don't have any money.</del>
 Unfortunately, I don't have any current hosting arrangements, so there is no
 current implementation. You can, of course, go through the hoops of setting
 up your own Spotify dev account (with appropriate callbacks) and this server

@@ -12,14 +12,30 @@ This project requires the following from `npm` to work properly:
 * express
 * request
 * querystring
-* cookie-parser 
+* cookie-parser
 
 <del>I've hosted this on an Amazon EC2 instance without SSL or a proper DNS name 
 because I don't have any money.</del>
 Unfortunately, I don't have any current hosting arrangements, so there is no
 current implementation. You can, of course, go through the hoops of setting
 up your own Spotify dev account (with appropriate callbacks) and this server
-yourself.
+yourself like so:
+
+* Head over to [developer.spotify.com](spotify_dev) and create a developer account
+by signing in with your existing Spotify account.
+* Create an "app"; the name and description is not significant.
+* Once your "app" has been created, copy down the Client ID and Client Secret listed on this page.
+* However, you're not done yet: add a redirect URI that corresponds to where you are going to be running this app. You can use localhost to run locally. Include the port (if not 80) like so: `http://localhost:8000/callback/`.
+* Don't forget to save your changes on the site!
+* Armed with this valuable information, open up `server.node.js` and copy this information - your client ID, client secret, port number and hostname (can be localhost) - into the file where indicated.
+
+## Running
+
+After installation, simply run the `server.node.js` file with your node.js interpreter:
+
+    $ node server.node.js
+
+and the server should be open on `http://localhost:<port>/`.
 
 ## Explanation
 
@@ -44,3 +60,5 @@ and has all the same tracks as the original. It does not, in any way, modify
 the original playlist; so you can shuffle public, collaborative and even 
 followed playlists properly. To reshuffle, just come back here and go through 
 the same process: it'll go into the same "Real Randomizer Playlist".
+
+[spotify_dev]: https://developer.spotify.com/my-applications/#!/

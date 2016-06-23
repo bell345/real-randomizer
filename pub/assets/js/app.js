@@ -479,7 +479,7 @@ Require([
         TBI.UI.updateUI();
 
         $(".sort-randomly").click(function () {
-            TBI.UI.sortTable($("#spotify-tracks")[0], -1, false, "custom", function () { return Math.random() < 0.5; });
+            TBI.UI.sortTable($("#spotify-tracks")[0], -1, false, "random");
         });
         
         function getTDIndex(headers, match, fallback) {
@@ -507,7 +507,7 @@ Require([
                 if (albumOrder.indexOf(album) == -1)
                     albumOrder.push(album);
             }
-            albumOrder.sort(function (a, b) { return Math.random() < 0.5 ? -1 : 1; });
+            albumOrder.shuffle();
             
             TBI.UI.sortTable($("#spotify-tracks")[0], -1, false, "custom", function (a, b) {
                 var albumA = getAlbumID(a),

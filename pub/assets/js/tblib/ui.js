@@ -312,6 +312,9 @@ TBI.UI.sortTable = function (table, colIndex, direction, type, customFunc) {
         else return cond ? -1 : 1;
     });
 
+    if (type == "random")
+        rows.shuffle();
+
     $(body).empty(); // get rid of all rows
     rows.forEach(function (e) { body.appendChild(e); }); // and put them back in correct order
 }

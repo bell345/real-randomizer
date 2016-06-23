@@ -142,9 +142,19 @@ Array.prototype.remove = Array.prototype.remove || function (index) {
 }
 // Copies the elements from one array to another to prevent unintended changes to another array.
 Array.prototype.copy = Array.prototype.copy || function () {
-    for (var i=0,a=[];i<this.length;i++) a.push(this[i]);
-    return a;
-}
+    return this.slice(0);
+};
+// Randomly permutates an array in place using the Durstenfield algorithm.
+// http://stackoverflow.com/a/12646864
+Array.prototype.shuffle = Array.prototype.shuffle || function () {
+    for (var i=this.length-1;i>0;i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = this[i];
+        this[i] = this[j];
+        this[j] = tmp;
+    }
+    return this;
+};
 // Makes sure that a string doesn't get mistaken for meta-characters when constructing a RegExp from a string.
 RegExp.quote = function (str) {
     return str.replace(/([.?*+^$[\]\\(){}-])/g, "\\$1");

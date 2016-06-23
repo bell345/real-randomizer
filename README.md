@@ -21,7 +21,7 @@ current implementation. You can, of course, go through the hoops of setting
 up your own Spotify dev account (with appropriate callbacks) and this server
 yourself like so:
 
-* Head over to [developer.spotify.com](spotify_dev) and create a developer account
+* Head over to [developer.spotify.com][spotify_dev] and create a developer account
 by signing in with your existing Spotify account.
 * Create an "app"; the name and description is not significant.
 * Once your "app" has been created, copy down the Client ID and Client Secret listed on this page.

@@ -4,30 +4,36 @@ A Spotify Web API app, written in node.js, for properly shuffling playlists.
 
 ## Installation/Implementation
 
-The source code for my little project does NOT include the Spotify `client_id`
-or `client_secret`, you'll have to provide your own in `server.node.js`.
+This project is hosted on my (other) website [sigptr.me][sigptr_me] right here:
 
-This project requires the following from `npm` to work properly:
+### https://sigptr.me/apps/spotify-rand/
 
-* express
-* request
-* querystring
-* cookie-parser
+If you want to install it yourself, here's what you'll need to do:
 
-<del>I've hosted this on an Amazon EC2 instance without SSL or a proper DNS name 
-because I don't have any money.</del>
-Unfortunately, I don't have any current hosting arrangements, so there is no
-current implementation. You can, of course, go through the hoops of setting
-up your own Spotify dev account (with appropriate callbacks) and this server
-yourself like so:
+1. Install the following from `npm`:
 
-* Head over to [developer.spotify.com][spotify_dev] and create a developer account
+    * express
+    * request
+    * querystring
+    * cookie-parser
+
+2. Head over to [developer.spotify.com][spotify_dev] and create a developer account
 by signing in with your existing Spotify account.
-* Create an "app"; the name and description is not significant.
-* Once your "app" has been created, copy down the Client ID and Client Secret listed on this page.
-* However, you're not done yet: add a redirect URI that corresponds to where you are going to be running this app. You can use localhost to run locally. Include the port (if not 80) like so: `http://localhost:8000/callback/`.
-* Don't forget to save your changes on the site!
-* Armed with this valuable information, open up `server.node.js` and copy this information - your client ID, client secret, port number and hostname (can be localhost) - into the file where indicated.
+
+3. Create an "app"; the name and description is not significant.
+
+4. Once your "app" has been created, copy down the Client ID and Client Secret listed
+on this page.
+
+5. However, you're not done yet: add a redirect URI that corresponds to where you are
+going to be running this app. You can use localhost to run locally. Include the port 
+(if not 80) like so: `http://localhost:8000/callback/`.
+
+6. Don't forget to save your changes on the site!
+
+7. Armed with this valuable information, open up `server.node.js` and copy this 
+information - your client ID, client secret, port number and hostname (can be 
+localhost) - into the file where indicated.
 
 ## Running
 
@@ -62,3 +68,4 @@ followed playlists properly. To reshuffle, just come back here and go through
 the same process: it'll go into the same "Real Randomizer Playlist".
 
 [spotify_dev]: https://developer.spotify.com/my-applications/#!/
+[sigptr_me]: https://sigptr.me

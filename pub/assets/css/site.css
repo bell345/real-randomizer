@@ -1089,7 +1089,6 @@ meter::-webkit-meter-bar, progress::-webkit-progress-bar {
     transition:0.4s all;
 }
 meter, progress {
-    -webkit-appearance:none;
     -moz-appearance:none;
     appearance:none;
     height:20px;

@@ -2,20 +2,29 @@
 ### Because Spotify doesn't do a good job
 A Spotify Web API app, written in node.js, for properly shuffling playlists.
 
-## Installation/Implementation
-
 This project is hosted on my (other) website [sigptr.me][sigptr_me] right here:
 
 ### https://sigptr.me/apps/spotify-rand/
 
+## New Installation Instructions (Docker!)
+
+A Docker image is available at:
+
+### https://hub.docker.com/r/sigptr/real-randomizer
+
+It requires the environment variables `CLIENT_ID`, `CLIENT_SECRET`, `BASE_URL`.
+`PORT` by default is 8008. See below on how to get a Spotify client ID and client
+secret. `BASE_URL` should be something like `http://localhost:8008` for local testing
+or `https://my.fancy.website.com/subdomain` if you want to access the site from a domain.
+Note that it does not include the `/callback` at the end.
+
+## Installation/Implementation
+
 If you want to install it yourself, here's what you'll need to do:
 
-1. Install the following from `npm`:
+1. Install the dependencies using:
 
-    * express
-    * request
-    * querystring
-    * cookie-parser
+    $ npm install .
 
 2. Head over to [developer.spotify.com][spotify_dev] and create a developer account
 by signing in with your existing Spotify account.
@@ -31,13 +40,12 @@ going to be running this app. You can use localhost to run locally. Include the 
 
 6. Don't forget to save your changes on the site!
 
-7. Armed with this valuable information, open up `server.node.js` and copy this 
-information - your client ID, client secret, port number and hostname (can be 
-localhost) - into the file where indicated.
+7. Armed with this valuable information, fill in the `.env.template` file with your details
+and rename to `.env`.
 
 ## Running
 
-After installation, simply run the `server.node.js` file with your node.js interpreter:
+After installation, run the `server.node.js` file with Node.js:
 
     $ node server.node.js
 

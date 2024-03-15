@@ -54,7 +54,7 @@ Require([
         function handleError(xhr, status, error, action, rectification) {
             if (xhr.responseJSON && xhr.responseJSON.error && xhr.responseJSON.error.message == "The access token expired") {
                 $.ajax({
-                    url: prepareQuery("/refresh_token", {
+                    url: prepareQuery("refresh_token", {
                         refresh_token: refresh_token
                     }),
                     success: function (response) {

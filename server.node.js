@@ -1,32 +1,29 @@
+require("dotenv").config();
 var express = require("express");
 var request = require("request");
-var querystring = require("querystring");
 var cookieParser = require("cookie-parser");
+var generateUUID = require("uuid").v4;
 
-var client_id = "<insert your own here>";
-var client_secret = "<insert your own here>";
+var client_id = process.env.CLIENT_ID;
+var client_secret = process.env.CLIENT_SECRET;
+if (!client_id || !client_secret) {
+    throw new Error("App requires CLIENT_ID and CLIENT_SECRET environment variables.");
+}
 var auth_string = "Basic " + (new Buffer(client_id + ":" + client_secret).toString("base64"));
 
-var port = 80;
-// something like "http://domain.net:80/callback"
-var redirect_uri = "<insert your own here>:" + port + "/callback";
-
-function generateUUID() {
-    var d = new Date().getTime();
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-    uuid = uuid.replace(/[xy]/g, function (c) {
-        var r = (d+Math.random()*16)%16|0;
-        d = Math.floor(d/16);
-        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16)
-    });
-    return uuid;
+var port = parseInt(process.env.PORT);
+if (isNaN(port)) {
+    port = 8008;
 }
+var base_url = process.env.BASE_URL ?? `http://localhost:${port}`;
+// something like "http://domain.net:80/callback"
+var redirect_uri = base_url + "/callback";
 
 function rejectAsError(res, desc) {
     res.redirect("/?" +
-        querystring.stringify({
+        new URLSearchParams({
             error: desc
-        })
+        }).toString()
     );
 }
 
@@ -45,15 +42,15 @@ app.get("/login", function (req, res) {
     var state = generateUUID();
     res.cookie(stateKey, state);
 
-    var scope = "user-library-read playlist-read-private playlist-read-collaborative playlist-modify-private user-read-private";
+    var scope = "user-library-read playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify-public user-read-private";
     res.redirect("https://accounts.spotify.com/authorize?" +
-        querystring.stringify({
+        new URLSearchParams({
             response_type: "code",
             client_id: client_id,
             scope: scope,
             redirect_uri: redirect_uri,
             state: state
-        })
+        }).toString()
     );
 });
 
@@ -92,12 +89,13 @@ app.get("/callback", function (req, res) {
 
                 request.get(options, function (error, response, body) {
                     if (!error && response.statusCode == 200) {
+                        console.log("New login from " + req.ip);
                         var userID = body.id;
 
                         res.cookie(accessTokenKey, access_token);
                         res.cookie(refreshTokenKey, refresh_token);
                         res.cookie(userIDKey, userID);
-                        res.redirect("/");
+                        res.redirect(base_url);
                     } else rejectAsError(res, "invalid_token");
                 });
             } else rejectAsError(res, "invalid_token")

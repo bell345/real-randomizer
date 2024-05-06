@@ -11,7 +11,7 @@ Require([
 
     loader.start();
     $(document).on("pageload", function () {
-        
+
         var playlistName = "Real Randomizer Playlist";
 
         var access_token = readCookie("spotify_access_token");
@@ -126,10 +126,10 @@ Require([
         }
 
         function clearPlaylist(userID, playlistID, callback) {
-            console.log("https://api.spotify.com/v1/users/"+userID+"/playlists/"+playlistID+"/tracks");
+            console.log("https://api.spotify.com/v1/playlists/"+playlistID+"/tracks");
             $.ajax({
                 type: "PUT",
-                url: "https://api.spotify.com/v1/users/"+userID+"/playlists/"+playlistID+"/tracks",
+                url: "https://api.spotify.com/v1/playlists/"+playlistID+"/tracks",
                 headers: {
                     "Authorization": "Bearer " + access_token,
                     "Content-Type": "application/json"
@@ -178,7 +178,7 @@ Require([
                 }
             })
         }
-        
+
         function updatePlaylistStatusMeter(progress, max, text) {
             var meter = $(".playlist-status meter")[0];
             meter.max = max;
@@ -195,7 +195,7 @@ Require([
 
             $.ajax({
                 method: "POST",
-                url: "https://api.spotify.com/v1/users/"+userID+"/playlists/"+playlistID+"/tracks",
+                url: "https://api.spotify.com/v1/playlists/"+playlistID+"/tracks",
                 headers: {
                     "Authorization": "Bearer " + access_token,
                     "Content-Type": "application/json"
@@ -207,14 +207,14 @@ Require([
                     if ((offset + maxTracks) > trackIDList.length) {
                         alert("Your playlist is ready! Reminder: turn off shuffle!");
                         followPlaylist(userID, playlistID, function () {});
-                        
+
                         updatePlaylistStatusMeter(0, 0, "");
                         $(".loading-playlist").hide();
                         $(".loaded-playlist").show();
                         $(".view-playlist")[0].href = "spotify:user:"+userID+":playlist:"+playlistID;
                     } else {
                         updatePlaylistStatusMeter(offset + maxTracks, trackIDList.length, "Playlist is filling...");
-                        
+
                         console.log("Filling playlist: ", offset + maxTracks);
                         fillPlaylistMore(userID, playlistID, trackIDList, offset + maxTracks);
                     }
@@ -393,7 +393,7 @@ Require([
                                 timeEl.innerHTML = minutes + ":" + zeroPrefix(seconds, 2);
                             timeCell.appendChild(timeEl);
                         row.appendChild(timeCell);
-                        
+
                         addTDLink(row, track.album.name, track.album.uri);
                         addTD(row, track.disc_number + ":" + track.track_number);
 
@@ -418,23 +418,23 @@ Require([
             )
 
         }
-        
+
         updateSelectAll = function () {
             var el = $(".select-all");
             var tracks = $("#spotify-tracks tbody tr");
             var searching = $("#spotify-tracks").hasClass("search");
-            
+
             var checked = true;
             for (var i=0;i<tracks.length;i++) {
                 if (searching && !($(tracks[i]).hasClass("search-result"))) continue;
-                
+
                 var checkbox = tracks[i].querySelector("input[type='checkbox']");
                 if (!TBI.UI.isToggled(checkbox)) {
                     checked = false;
                     break;
                 }
             }
-            
+
             TBI.UI.toggleButton(el, checked); // cosmetic
         }
 
@@ -462,7 +462,7 @@ Require([
                     option.textContent = playlist.name;
                     if (userID != null && playlist.owner.id != userID)
                         option.textContent += " ("+playlist.owner.id+")";
-                    
+
                     select.appendChild(option);
                 },
                 function () {
@@ -481,25 +481,25 @@ Require([
         $(".sort-randomly").click(function () {
             TBI.UI.sortTable($("#spotify-tracks")[0], -1, false, "random");
         });
-        
+
         function getTDIndex(headers, match, fallback) {
             for (var i=0;i<headers.length;i++)
                 if (headers[i].innerText == match)
                     return i;
-            
+
             return fallback;
         }
-        
+
         $(".sort-random-album").click(function () {
             var headers = $("#spotify-tracks th"),
                 albumTDIndex = getTDIndex(headers, "Album", 3),
                 noTDIndex = getTDIndex(headers, "#", albumTDIndex + 1),
                 getAlbumID = function (el) { return el.getElementsByTagName("td")[albumTDIndex].getElementsByTagName("a")[0].href; },
-                getSequenceOrder = function (el) { 
-                    var v = el.getElementsByTagName("td")[noTDIndex].textContent.split(":"); 
-                    return parseInt(v[0]) * 1000 + parseInt(v[1]); 
+                getSequenceOrder = function (el) {
+                    var v = el.getElementsByTagName("td")[noTDIndex].textContent.split(":");
+                    return parseInt(v[0]) * 1000 + parseInt(v[1]);
                 };
-            
+
             var tracks = $("#spotify-tracks tbody")[0].getElementsByTagName("tr");
             var albumOrder = [];
             for (var i=0;i<tracks.length;i++) {
@@ -508,15 +508,15 @@ Require([
                     albumOrder.push(album);
             }
             albumOrder.shuffle();
-            
+
             TBI.UI.sortTable($("#spotify-tracks")[0], -1, false, "custom", function (a, b) {
                 var albumA = getAlbumID(a),
                     albumB = getAlbumID(b);
-                
+
                 if (albumA == albumB) {
                     var trackNoA = getSequenceOrder(a),
                         trackNoB = getSequenceOrder(b);
-                    
+
                     return trackNoA < trackNoB;
                 } else return albumOrder.indexOf(albumA) < albumOrder.indexOf(albumB);
             });
@@ -548,28 +548,28 @@ Require([
         if (readCookie("explanation-show") != null) {
             $(".explanation").toggle(readCookie("explanation-show") == "1");
         }
-        
+
         $(".search-box").change(function () {
             var v = $(".search-box").val().toLowerCase();
-            
+
             if (isNull(v)) {
                 $("#spotify-tracks").toggleClass("search", false);
             } else {
                 $("#spotify-tracks").toggleClass("search", true);
                 $("#spotify-tracks .search-result").toggleClass("search-result", false);
-                
+
                 var headers = $("#spotify-tracks th"),
                     trackNameTDIndex = getTDIndex(headers, "Track Name", 0),
                     artistNameTDIndex = getTDIndex(headers, "Artist(s)", 1),
                     albumNameTDIndex = getTDIndex(headers, "Album", 3);
-                
+
                 var tracks = $("#spotify-tracks tbody tr");
                 for (var i=0;i<tracks.length;i++) {
                     var tds = tracks[i].getElementsByTagName("td");
                     var trackName = tds[trackNameTDIndex].textContent.toLowerCase(),
                         artists = tds[artistNameTDIndex].textContent.toLowerCase(),
                         album = tds[albumNameTDIndex].textContent.toLowerCase();
-                    
+
                     if (trackName.search(v) != -1 ||
                         artists.search(v) != -1 ||
                         album.search(v) != -1
@@ -580,18 +580,18 @@ Require([
             }
             updateSelectAll();
         });
-        
+
         $(".select-all").change(function () {
             var v = TBI.UI.isToggled(this);
-            
+
             var searching = $("#spotify-tracks").hasClass("search");
-            
+
             var tracks = $("#spotify-tracks tbody tr");
             for (var i=0;i<tracks.length;i++) {
                 var checkbox = tracks[i].querySelector("input[type='checkbox']");
-                
+
                 if (searching && !($(tracks[i]).hasClass("search-result"))) continue;
-                
+
                 TBI.UI.toggleButton(checkbox, v);
             }
         });
